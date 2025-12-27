@@ -1,4 +1,5 @@
 import { List } from "@raycast/api";
+import { ReactNode } from "react";
 import { Project, ProjectWithStatus } from "../types";
 import { Icons } from "../constants";
 import ProjectActions from "./ProjectActions";
@@ -13,6 +14,7 @@ interface ProjectListItemProps {
   onRefresh: () => void;
   onDelete: (project: Project) => Promise<boolean>;
   onToggleFavorite: (project: Project) => Promise<void>;
+  sortActions?: ReactNode;
 }
 
 export default function ProjectListItem({
@@ -21,6 +23,7 @@ export default function ProjectListItem({
   onRefresh,
   onDelete,
   onToggleFavorite,
+  sortActions,
 }: ProjectListItemProps) {
   const subtitle = formatSubtitle(project);
   const keywords = [project.alias, project.app.name, project.group, ...project.paths].filter(
@@ -42,6 +45,7 @@ export default function ProjectListItem({
           onRefresh={onRefresh}
           onDelete={onDelete}
           onToggleFavorite={onToggleFavorite}
+          sortActions={sortActions}
         />
       }
     />

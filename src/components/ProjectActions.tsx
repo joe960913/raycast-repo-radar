@@ -1,4 +1,5 @@
 import { ActionPanel, Action, confirmAlert, Alert } from "@raycast/api";
+import { ReactNode } from "react";
 import { Project, ProjectWithStatus } from "../types";
 import { SHORTCUTS, Icons } from "../constants";
 import { openProjectWithToast } from "../lib/ide";
@@ -15,6 +16,7 @@ interface ProjectActionsProps {
   onRefresh: () => void;
   onDelete: (project: Project) => Promise<boolean>;
   onToggleFavorite: (project: Project) => Promise<void>;
+  sortActions?: ReactNode;
 }
 
 export default function ProjectActions({
@@ -23,6 +25,7 @@ export default function ProjectActions({
   onRefresh,
   onDelete,
   onToggleFavorite,
+  sortActions,
 }: ProjectActionsProps) {
   const handleOpen = async () => {
     await openProjectWithToast(project);
@@ -103,6 +106,9 @@ export default function ProjectActions({
           }}
         />
       </ActionPanel.Section>
+
+      {/* Sort (from parent) */}
+      {sortActions && <ActionPanel.Section title="View">{sortActions}</ActionPanel.Section>}
 
       {/* Destructive */}
       <ActionPanel.Section>

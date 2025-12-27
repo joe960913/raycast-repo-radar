@@ -1,4 +1,4 @@
-import { List } from "@raycast/api";
+import { List, ActionPanel, Action, Icon, Keyboard } from "@raycast/api";
 import { useState } from "react";
 import { useProjects, SORT_OPTIONS, SortOption } from "./hooks/useProjects";
 import { ProjectListItem, EmptyView } from "./components";
@@ -31,31 +31,20 @@ export default function GoCommand() {
       searchBarPlaceholder="Search projects..."
       searchBarAccessory={
         <List.Dropdown
-          tooltip="Filter & Sort"
-          value={`${selectedGroup}|${sortBy}`}
-          onChange={(value) => {
-            const [group, sort] = value.split("|");
-            if (group) setSelectedGroup(group);
-            if (sort) setSortBy(sort as SortOption);
-          }}
+          tooltip="Filter by group"
+          value={selectedGroup}
+          onChange={setSelectedGroup}
         >
-          <List.Dropdown.Section title="Filter">
-            <List.Dropdown.Item title="All Projects" value={`all|${sortBy}`} />
-            <List.Dropdown.Item title="Favorites" value={`favorites|${sortBy}`} />
-            {groups.map((group) => (
-              <List.Dropdown.Item key={group} title={group} value={`${group}|${sortBy}`} />
-            ))}
-            <List.Dropdown.Item title="Ungrouped" value={`ungrouped|${sortBy}`} />
-          </List.Dropdown.Section>
-          <List.Dropdown.Section title="Sort">
-            {SORT_OPTIONS.map((option) => (
-              <List.Dropdown.Item
-                key={option.value}
-                title={option.title}
-                value={`${selectedGroup}|${option.value}`}
-              />
-            ))}
-          </List.Dropdown.Section>
+          <List.Dropdown.Item title="All Projects" value="all" icon={Icon.List} />
+          <List.Dropdown.Item title="Favorites" value="favorites" icon={Icon.Star} />
+          {groups.length > 0 && (
+            <List.Dropdown.Section title="Groups">
+              {groups.map((group) => (
+                <List.Dropdown.Item key={group} title={group} value={group} icon={Icon.Folder} />
+              ))}
+            </List.Dropdown.Section>
+          )}
+          <List.Dropdown.Item title="Ungrouped" value="ungrouped" icon={Icon.Document} />
         </List.Dropdown>
       }
     >
@@ -72,6 +61,19 @@ export default function GoCommand() {
                 onRefresh={refresh}
                 onDelete={deleteProject}
                 onToggleFavorite={toggleFavorite}
+                sortActions={
+                  <ActionPanel.Submenu title="Sort By" icon={Icon.ArrowsUpDown} shortcut={{ modifiers: ["cmd", "shift"], key: "s" }}>
+                    {SORT_OPTIONS.map((option, index) => (
+                      <Action
+                        key={option.value}
+                        title={option.title}
+                        icon={sortBy === option.value ? Icon.Checkmark : undefined}
+                        shortcut={{ modifiers: ["cmd"], key: String(index + 1) as Keyboard.KeyEquivalent }}
+                        onAction={() => setSortBy(option.value)}
+                      />
+                    ))}
+                  </ActionPanel.Submenu>
+                }
               />
             ))}
           </List.Section>

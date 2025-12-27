@@ -39,8 +39,11 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
   // Track selected paths and app for multi-workspace warning
   const [selectedPaths, setSelectedPaths] = useState<string[]>(project?.paths || []);
   const [selectedAppBundleId, setSelectedAppBundleId] = useState<string | undefined>(project?.app?.bundleId);
+  const [selectedGroup, setSelectedGroup] = useState<string>(project?.group || "");
+  const [customGroup, setCustomGroup] = useState<string>("");
 
   const isEditing = !!project;
+  const isCreatingNewGroup = selectedGroup === "__new__";
 
   // Check if we need to show multi-workspace warning
   const showMultiWorkspaceWarning =
@@ -105,12 +108,17 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
         path: selectedApp.path,
       };
 
+      // Determine the final group value
+      const finalGroup = values.group === "__new__"
+        ? (customGroup.trim() || undefined)
+        : (values.group || undefined);
+
       if (isEditing && project) {
         await updateProject(project.id, {
           alias: values.alias.trim(),
           paths: values.paths,
           app: appInfo,
-          group: values.group || undefined,
+          group: finalGroup,
         });
         await showToast({
           style: Toast.Style.Success,
@@ -124,7 +132,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
           alias: values.alias.trim(),
           paths: values.paths,
           app: appInfo,
-          group: values.group || undefined,
+          group: finalGroup,
         });
         await showToast({
           style: Toast.Style.Success,
@@ -228,12 +236,26 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
         title="Group"
         info="Organize projects by group"
         defaultValue={project?.group || ""}
+        onChange={setSelectedGroup}
       >
         <Form.Dropdown.Item key="" value="" title="No Group" icon={Icons.Minus} />
         {allGroups.map((group) => (
           <Form.Dropdown.Item key={group} value={group} title={group} icon={Icons.Folder} />
         ))}
+        <Form.Dropdown.Section title="Custom">
+          <Form.Dropdown.Item key="__new__" value="__new__" title="Create New Group..." icon={Icons.Plus} />
+        </Form.Dropdown.Section>
       </Form.Dropdown>
+
+      {isCreatingNewGroup && (
+        <Form.TextField
+          id="customGroup"
+          title="New Group Name"
+          placeholder="Enter group name"
+          value={customGroup}
+          onChange={setCustomGroup}
+        />
+      )}
 
       {!isEditing && (
         <>
