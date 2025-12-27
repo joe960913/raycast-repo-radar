@@ -57,8 +57,22 @@ export default function ProjectListItem({
 // ============================================
 
 function formatSubtitle(project: Project): string {
-  const pathName = project.paths[0].split("/").pop() || project.paths[0];
-  return pathName;
+  const path = project.paths[0];
+  const home = process.env.HOME || "";
+
+  // Convert to relative path from home
+  const relativePath = path.startsWith(home) ? "~" + path.slice(home.length) : path;
+
+  // Remove the last component if it matches the alias (avoid repetition)
+  const parts = relativePath.split("/");
+  const lastPart = parts[parts.length - 1];
+
+  if (lastPart.toLowerCase() === project.alias.toLowerCase()) {
+    // Show parent path instead
+    return parts.slice(0, -1).join("/");
+  }
+
+  return relativePath;
 }
 
 function getAccessories(project: Project): List.Item.Accessory[] {

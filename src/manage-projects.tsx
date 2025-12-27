@@ -57,7 +57,7 @@ export default function ManageProjects() {
               key={project.id}
               icon={{ fileIcon: iconPath }}
               title={project.alias}
-              subtitle={project.paths[0].split("/").pop()}
+              subtitle={formatSubtitle(project)}
               keywords={[project.alias, project.app.name, project.group, ...project.paths].filter(Boolean) as string[]}
               accessories={getAccessories(project)}
               actions={
@@ -113,6 +113,25 @@ export default function ManageProjects() {
 // ============================================
 // Helper Functions
 // ============================================
+
+function formatSubtitle(project: Project): string {
+  const path = project.paths[0];
+  const home = process.env.HOME || "";
+
+  // Convert to relative path from home
+  const relativePath = path.startsWith(home) ? "~" + path.slice(home.length) : path;
+
+  // Remove the last component if it matches the alias (avoid repetition)
+  const parts = relativePath.split("/");
+  const lastPart = parts[parts.length - 1];
+
+  if (lastPart.toLowerCase() === project.alias.toLowerCase()) {
+    // Show parent path instead
+    return parts.slice(0, -1).join("/");
+  }
+
+  return relativePath;
+}
 
 function getAccessories(project: Project): List.Item.Accessory[] {
   const accessories: List.Item.Accessory[] = [];
