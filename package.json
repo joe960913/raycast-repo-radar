@@ -2,12 +2,11 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "repo-radar",
   "title": "Repo Radar",
-  "description": "Quick project launcher with aliases, multi-workspace support, per-project IDE, Git status, favorites, and smart sorting",
+  "description": "Lightning-fast project launcher with aliases, IDE + Terminal support, Git status, favorites, groups, and smart sorting",
   "icon": "extension-icon.png",
   "author": "zander_zi",
   "platforms": [
-    "macOS",
-    "Windows"
+    "macOS"
   ],
   "categories": [
     "Developer Tools",
@@ -19,23 +18,23 @@
       "name": "open-project",
       "title": "Go",
       "subtitle": "Repo Radar",
-      "description": "Search, filter, and open projects with Git status preview",
+      "description": "Search and launch projects in IDE, Terminal, or both",
       "mode": "view",
-      "keywords": ["open", "project", "go", "o", "jump", "cd", "search"]
+      "keywords": ["open", "project", "go", "o", "jump", "cd", "search", "terminal"]
     },
     {
       "name": "manage-projects",
       "title": "Add Project",
       "subtitle": "Repo Radar",
-      "description": "Create a new project alias with paths and IDE",
+      "description": "Create project alias with IDE, Terminal, and group settings",
       "mode": "view",
-      "keywords": ["add", "new", "create", "manage"]
+      "keywords": ["add", "new", "create", "manage", "project"]
     },
     {
       "name": "clear-data",
       "title": "Clear All Data",
       "subtitle": "Repo Radar",
-      "description": "Delete all saved projects and reset extension",
+      "description": "Delete all projects and reset extension data",
       "mode": "no-view"
     }
   ],
