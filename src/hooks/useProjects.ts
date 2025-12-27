@@ -13,20 +13,65 @@ import { getCombinedGitStatus } from "../lib/git";
 // Sorting Logic
 // ============================================
 
-function sortProjects<T extends Project>(projects: T[]): T[] {
+export type SortOption = "smart" | "recent" | "alphabetical" | "created";
+
+export const SORT_OPTIONS: { value: SortOption; title: string }[] = [
+  { value: "smart", title: "Smart" },
+  { value: "recent", title: "Recently Opened" },
+  { value: "alphabetical", title: "A-Z" },
+  { value: "created", title: "Recently Added" },
+];
+
+function sortProjects<T extends Project>(projects: T[], sortBy: SortOption = "smart"): T[] {
   return [...projects].sort((a, b) => {
-    // 1. Favorites first
+    // Always put favorites first for all sort modes
     if (a.isFavorite && !b.isFavorite) return -1;
     if (!a.isFavorite && b.isFavorite) return 1;
 
-    // 2. Recently opened
-    const aOpened = a.lastOpenedAt || 0;
-    const bOpened = b.lastOpenedAt || 0;
-    if (aOpened !== bOpened) return bOpened - aOpened;
+    switch (sortBy) {
+      case "recent":
+        // By last opened time (most recent first)
+        const aOpened = a.lastOpenedAt || 0;
+        const bOpened = b.lastOpenedAt || 0;
+        return bOpened - aOpened;
 
-    // 3. By creation date (newest first)
-    return b.createdAt - a.createdAt;
+      case "alphabetical":
+        // Alphabetically by alias
+        return a.alias.localeCompare(b.alias);
+
+      case "created":
+        // By creation date (newest first)
+        return b.createdAt - a.createdAt;
+
+      case "smart":
+      default:
+        // Smart: recent > created (with decay)
+        const now = Date.now();
+        const aScore = calculateSmartScore(a, now);
+        const bScore = calculateSmartScore(b, now);
+        return bScore - aScore;
+    }
   });
+}
+
+// Calculate a "frecency" score based on recency and frequency
+function calculateSmartScore(project: Project, now: number): number {
+  let score = 0;
+
+  // Recency boost: recently opened projects get higher scores
+  if (project.lastOpenedAt) {
+    const hoursAgo = (now - project.lastOpenedAt) / (1000 * 60 * 60);
+    if (hoursAgo < 1) score += 100;        // Last hour
+    else if (hoursAgo < 24) score += 80;   // Today
+    else if (hoursAgo < 168) score += 50;  // This week
+    else if (hoursAgo < 720) score += 20;  // This month
+    else score += 5;                        // Older
+  }
+
+  // Creation date as tiebreaker
+  score += (project.createdAt / now) * 10;
+
+  return score;
 }
 
 // ============================================
@@ -37,6 +82,8 @@ interface UseProjectsReturn {
   projects: ProjectWithStatus[];
   groups: string[];
   isLoading: boolean;
+  sortBy: SortOption;
+  setSortBy: (sort: SortOption) => void;
   refresh: () => Promise<void>;
   deleteProject: (project: Project) => Promise<boolean>;
   toggleFavorite: (project: Project) => Promise<void>;
@@ -46,6 +93,7 @@ export function useProjects(): UseProjectsReturn {
   const [projects, setProjects] = useState<ProjectWithStatus[]>([]);
   const [groups, setGroups] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<SortOption>("smart");
 
   const loadProjects = useCallback(async () => {
     setIsLoading(true);
@@ -58,7 +106,7 @@ export function useProjects(): UseProjectsReturn {
         gitStatus: getCombinedGitStatus(project.paths),
       }));
 
-      setProjects(sortProjects(projectsWithStatus));
+      setProjects(sortProjects(projectsWithStatus, sortBy));
       setGroups(storedGroups);
     } catch (error) {
       await showToast({
@@ -69,7 +117,14 @@ export function useProjects(): UseProjectsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [sortBy]);
+
+  // Re-sort when sortBy changes
+  useEffect(() => {
+    if (projects.length > 0) {
+      setProjects((prev) => sortProjects([...prev], sortBy));
+    }
+  }, [sortBy]);
 
   const deleteProject = useCallback(async (project: Project): Promise<boolean> => {
     const success = await removeProject(project.id);
@@ -102,6 +157,8 @@ export function useProjects(): UseProjectsReturn {
     projects,
     groups,
     isLoading,
+    sortBy,
+    setSortBy,
     refresh: loadProjects,
     deleteProject,
     toggleFavorite,

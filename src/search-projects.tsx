@@ -1,6 +1,6 @@
 import { List } from "@raycast/api";
 import { useState } from "react";
-import { useProjects } from "./hooks/useProjects";
+import { useProjects, SORT_OPTIONS, SortOption } from "./hooks/useProjects";
 import { ProjectListItem, EmptyView } from "./components";
 import { ProjectWithStatus } from "./types";
 
@@ -9,7 +9,7 @@ import { ProjectWithStatus } from "./types";
 // ============================================
 
 export default function SearchProjects() {
-  const { projects, groups, isLoading, refresh, deleteProject, toggleFavorite } = useProjects();
+  const { projects, groups, isLoading, refresh, deleteProject, toggleFavorite, sortBy, setSortBy } = useProjects();
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
 
   // Filter projects by selected group
@@ -31,17 +31,30 @@ export default function SearchProjects() {
       searchBarPlaceholder="Search projects..."
       searchBarAccessory={
         <List.Dropdown
-          tooltip="Filter by group"
-          value={selectedGroup}
-          onChange={setSelectedGroup}
+          tooltip="Filter & Sort"
+          value={`${selectedGroup}|${sortBy}`}
+          onChange={(value) => {
+            const [group, sort] = value.split("|");
+            if (group) setSelectedGroup(group);
+            if (sort) setSortBy(sort as SortOption);
+          }}
         >
-          <List.Dropdown.Item title="All Projects" value="all" />
-          <List.Dropdown.Item title="Favorites" value="favorites" />
-          <List.Dropdown.Section title="Groups">
+          <List.Dropdown.Section title="Filter">
+            <List.Dropdown.Item title="All Projects" value={`all|${sortBy}`} />
+            <List.Dropdown.Item title="Favorites" value={`favorites|${sortBy}`} />
             {groups.map((group) => (
-              <List.Dropdown.Item key={group} title={group} value={group} />
+              <List.Dropdown.Item key={group} title={group} value={`${group}|${sortBy}`} />
             ))}
-            <List.Dropdown.Item title="Ungrouped" value="ungrouped" />
+            <List.Dropdown.Item title="Ungrouped" value={`ungrouped|${sortBy}`} />
+          </List.Dropdown.Section>
+          <List.Dropdown.Section title="Sort">
+            {SORT_OPTIONS.map((option) => (
+              <List.Dropdown.Item
+                key={option.value}
+                title={option.title}
+                value={`${selectedGroup}|${option.value}`}
+              />
+            ))}
           </List.Dropdown.Section>
         </List.Dropdown>
       }
