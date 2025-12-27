@@ -6,9 +6,14 @@ export interface Project {
   id: string;
   alias: string;
   paths: string[];
-  app: AppInfo; // Changed from `ide: IDE` to support any application
+  app: AppInfo;
   createdAt: number;
   updatedAt: number;
+  // Feature: Favorites & Recent
+  isFavorite?: boolean;
+  lastOpenedAt?: number;
+  // Feature: Groups
+  group?: string;
 }
 
 // ============================================
@@ -43,6 +48,7 @@ export interface ProjectWithStatus extends Project {
 
 export interface ProjectFormProps {
   project?: Project;
+  groups?: string[];
   onSave: () => void;
 }
 

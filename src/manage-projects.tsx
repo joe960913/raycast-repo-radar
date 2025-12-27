@@ -1,7 +1,7 @@
-import { ActionPanel, Action, List, Icon, confirmAlert, Alert } from "@raycast/api";
+import { ActionPanel, Action, List, confirmAlert, Alert } from "@raycast/api";
 import { useProjectsSimple } from "./hooks/useProjects";
 import { ProjectForm } from "./components";
-import { SHORTCUTS } from "./constants";
+import { SHORTCUTS, Icons } from "./constants";
 import { Project } from "./types";
 
 // ============================================
@@ -9,7 +9,7 @@ import { Project } from "./types";
 // ============================================
 
 export default function ManageProjects() {
-  const { projects, isLoading, refresh, deleteProject } = useProjectsSimple();
+  const { projects, groups, isLoading, refresh, deleteProject, toggleFavorite } = useProjectsSimple();
 
   const handleDelete = async (project: Project) => {
     const confirmed = await confirmAlert({
@@ -26,6 +26,10 @@ export default function ManageProjects() {
     }
   };
 
+  const handleToggleFavorite = async (project: Project) => {
+    await toggleFavorite(project);
+  };
+
   return (
     <List
       isLoading={isLoading}
@@ -33,16 +37,16 @@ export default function ManageProjects() {
     >
       {projects.length === 0 && !isLoading ? (
         <List.EmptyView
-          icon={Icon.Document}
+          icon={Icons.Document}
           title="No Projects"
           description="Add your first project to get started"
           actions={
             <ActionPanel>
               <Action.Push
-                icon={Icon.Plus}
+                icon={Icons.Plus}
                 title="Add Project"
                 shortcut={SHORTCUTS.ADD_PROJECT as any}
-                target={<ProjectForm onSave={refresh} />}
+                target={<ProjectForm groups={groups} onSave={refresh} />}
               />
             </ActionPanel>
           }
@@ -54,26 +58,33 @@ export default function ManageProjects() {
             icon={{ fileIcon: project.app.path }}
             title={project.alias}
             subtitle={project.paths[0].split("/").pop()}
-            keywords={[project.alias, project.app.name, ...project.paths]}
+            keywords={[project.alias, project.app.name, project.group, ...project.paths].filter(Boolean) as string[]}
             accessories={[
+              project.isFavorite ? { icon: Icons.StarFilled, tooltip: "Favorite" } : null,
+              project.group ? { icon: Icons.Folder, text: project.group } : null,
               project.paths.length > 1
-                ? { text: `${project.paths.length}`, icon: Icon.Folder, tooltip: `${project.paths.length} paths` }
+                ? { text: `${project.paths.length}`, icon: Icons.FolderOpen, tooltip: `${project.paths.length} paths` }
                 : null,
-              { text: project.app.name },
             ].filter(Boolean) as List.Item.Accessory[]}
             actions={
               <ActionPanel>
                 <ActionPanel.Section>
                   <Action.Push
-                    icon={Icon.Pencil}
+                    icon={Icons.Pencil}
                     title="Edit Project"
-                    target={<ProjectForm project={project} onSave={refresh} />}
+                    target={<ProjectForm project={project} groups={groups} onSave={refresh} />}
+                  />
+                  <Action
+                    icon={project.isFavorite ? Icons.Star : Icons.StarFilled}
+                    title={project.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                    shortcut={SHORTCUTS.TOGGLE_FAVORITE as any}
+                    onAction={() => handleToggleFavorite(project)}
                   />
                   <Action.Push
-                    icon={Icon.Plus}
+                    icon={Icons.Plus}
                     title="Add Project"
                     shortcut={SHORTCUTS.ADD_PROJECT as any}
-                    target={<ProjectForm onSave={refresh} />}
+                    target={<ProjectForm groups={groups} onSave={refresh} />}
                   />
                 </ActionPanel.Section>
 
@@ -91,7 +102,7 @@ export default function ManageProjects() {
 
                 <ActionPanel.Section>
                   <Action
-                    icon={Icon.Trash}
+                    icon={Icons.Trash}
                     title="Delete Project"
                     style={Action.Style.Destructive}
                     shortcut={SHORTCUTS.DELETE_PROJECT as any}

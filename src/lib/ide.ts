@@ -1,5 +1,6 @@
 import { showToast, Toast, showHUD, open } from "@raycast/api";
 import { Project } from "../types";
+import { updateLastOpened } from "./storage";
 
 // ============================================
 // IDE/App Operations
@@ -11,6 +12,10 @@ export async function openProjectInApp(project: Project): Promise<boolean> {
     for (const path of project.paths) {
       await open(path, project.app.bundleId);
     }
+
+    // Record last opened time
+    await updateLastOpened(project.id);
+
     return true;
   } catch (error) {
     await showToast({

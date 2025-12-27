@@ -5,7 +5,6 @@ import {
   showToast,
   Toast,
   useNavigation,
-  Icon,
   launchCommand,
   LaunchType,
 } from "@raycast/api";
@@ -14,6 +13,7 @@ import { ProjectFormProps, AppInfo } from "../types";
 import { addProject, updateProject, isAliasExists } from "../lib/storage";
 import { useApplications } from "../hooks/useApplications";
 import { createProjectDeeplink } from "../utils/deeplink";
+import { DEFAULT_GROUPS, supportsMultiWorkspace, Icons } from "../constants";
 
 // ============================================
 // Form Values Interface
@@ -23,6 +23,7 @@ interface FormValues {
   alias: string;
   paths: string[];
   appBundleId: string;
+  group: string;
   createQuicklink: boolean;
 }
 
@@ -30,12 +31,27 @@ interface FormValues {
 // ProjectForm Component
 // ============================================
 
-export default function ProjectForm({ project, onSave }: ProjectFormProps) {
+export default function ProjectForm({ project, groups = [], onSave }: ProjectFormProps) {
   const { pop } = useNavigation();
   const [aliasError, setAliasError] = useState<string | undefined>();
   const { applications, isLoading: appsLoading } = useApplications();
 
+  // Track selected paths and app for multi-workspace warning
+  const [selectedPaths, setSelectedPaths] = useState<string[]>(project?.paths || []);
+  const [selectedAppBundleId, setSelectedAppBundleId] = useState<string | undefined>(project?.app?.bundleId);
+
   const isEditing = !!project;
+
+  // Check if we need to show multi-workspace warning
+  const showMultiWorkspaceWarning =
+    selectedPaths.length > 1 &&
+    selectedAppBundleId &&
+    !supportsMultiWorkspace(selectedAppBundleId);
+
+  const selectedAppName = applications.find((app) => app.bundleId === selectedAppBundleId)?.name;
+
+  // Combine existing groups with default groups
+  const allGroups = [...new Set([...groups, ...DEFAULT_GROUPS])];
 
   async function handleSubmit(values: FormValues) {
     // Validate alias
@@ -94,6 +110,7 @@ export default function ProjectForm({ project, onSave }: ProjectFormProps) {
           alias: values.alias.trim(),
           paths: values.paths,
           app: appInfo,
+          group: values.group || undefined,
         });
         await showToast({
           style: Toast.Style.Success,
@@ -107,6 +124,7 @@ export default function ProjectForm({ project, onSave }: ProjectFormProps) {
           alias: values.alias.trim(),
           paths: values.paths,
           app: appInfo,
+          group: values.group || undefined,
         });
         await showToast({
           style: Toast.Style.Success,
@@ -154,7 +172,7 @@ export default function ProjectForm({ project, onSave }: ProjectFormProps) {
         <ActionPanel>
           <Action.SubmitForm
             title={isEditing ? "Save" : "Create"}
-            icon={Icon.Check}
+            icon={Icons.Check}
             onSubmit={handleSubmit}
           />
         </ActionPanel>
@@ -179,12 +197,14 @@ export default function ProjectForm({ project, onSave }: ProjectFormProps) {
         canChooseFiles={false}
         info="Select project folders"
         defaultValue={project?.paths}
+        onChange={setSelectedPaths}
       />
 
       <Form.Dropdown
         id="appBundleId"
         title="Open With"
         defaultValue={appsLoading ? undefined : project?.app?.bundleId}
+        onChange={setSelectedAppBundleId}
       >
         {applications.map((app) => (
           <Form.Dropdown.Item
@@ -193,6 +213,25 @@ export default function ProjectForm({ project, onSave }: ProjectFormProps) {
             title={app.name}
             icon={{ fileIcon: app.path }}
           />
+        ))}
+      </Form.Dropdown>
+
+      {showMultiWorkspaceWarning && (
+        <Form.Description
+          title="Note"
+          text={`${selectedAppName || "This IDE"} does not support multi-folder workspaces. Each path will open in a separate window.`}
+        />
+      )}
+
+      <Form.Dropdown
+        id="group"
+        title="Group"
+        info="Organize projects by group"
+        defaultValue={project?.group || ""}
+      >
+        <Form.Dropdown.Item key="" value="" title="No Group" icon={Icons.Minus} />
+        {allGroups.map((group) => (
+          <Form.Dropdown.Item key={group} value={group} title={group} icon={Icons.Folder} />
         ))}
       </Form.Dropdown>
 

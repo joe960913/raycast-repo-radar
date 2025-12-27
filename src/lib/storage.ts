@@ -77,6 +77,57 @@ export async function deleteProject(id: string): Promise<boolean> {
 }
 
 // ============================================
+// Favorites & Recent
+// ============================================
+
+export async function toggleFavorite(id: string): Promise<boolean> {
+  const projects = await getProjects();
+  const index = projects.findIndex((p) => p.id === id);
+
+  if (index === -1) return false;
+
+  projects[index].isFavorite = !projects[index].isFavorite;
+  projects[index].updatedAt = Date.now();
+
+  await saveProjects(projects);
+  return projects[index].isFavorite ?? false;
+}
+
+export async function updateLastOpened(id: string): Promise<void> {
+  const projects = await getProjects();
+  const index = projects.findIndex((p) => p.id === id);
+
+  if (index === -1) return;
+
+  projects[index].lastOpenedAt = Date.now();
+  await saveProjects(projects);
+}
+
+// ============================================
+// Groups
+// ============================================
+
+export async function getGroups(): Promise<string[]> {
+  const projects = await getProjects();
+  const groups = projects
+    .map((p) => p.group)
+    .filter((g): g is string => !!g);
+  return [...new Set(groups)].sort();
+}
+
+export async function setProjectGroup(id: string, group: string | undefined): Promise<void> {
+  const projects = await getProjects();
+  const index = projects.findIndex((p) => p.id === id);
+
+  if (index === -1) return;
+
+  projects[index].group = group;
+  projects[index].updatedAt = Date.now();
+
+  await saveProjects(projects);
+}
+
+// ============================================
 // Validation
 // ============================================
 

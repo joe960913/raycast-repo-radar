@@ -1,5 +1,6 @@
-import { List, Icon } from "@raycast/api";
+import { List } from "@raycast/api";
 import { Project, ProjectWithStatus } from "../types";
+import { Icons } from "../constants";
 import ProjectActions from "./ProjectActions";
 
 // ============================================
@@ -8,13 +9,23 @@ import ProjectActions from "./ProjectActions";
 
 interface ProjectListItemProps {
   project: ProjectWithStatus;
+  groups: string[];
   onRefresh: () => void;
   onDelete: (project: Project) => Promise<boolean>;
+  onToggleFavorite: (project: Project) => Promise<void>;
 }
 
-export default function ProjectListItem({ project, onRefresh, onDelete }: ProjectListItemProps) {
+export default function ProjectListItem({
+  project,
+  groups,
+  onRefresh,
+  onDelete,
+  onToggleFavorite,
+}: ProjectListItemProps) {
   const subtitle = formatSubtitle(project);
-  const keywords = [project.alias, project.app.name, ...project.paths];
+  const keywords = [project.alias, project.app.name, project.group, ...project.paths].filter(
+    Boolean
+  ) as string[];
 
   return (
     <List.Item
@@ -27,8 +38,10 @@ export default function ProjectListItem({ project, onRefresh, onDelete }: Projec
       actions={
         <ProjectActions
           project={project}
+          groups={groups}
           onRefresh={onRefresh}
           onDelete={onDelete}
+          onToggleFavorite={onToggleFavorite}
         />
       }
     />
@@ -47,20 +60,58 @@ function formatSubtitle(project: ProjectWithStatus): string {
 function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
   const accessories: List.Item.Accessory[] = [];
 
-  // Git branch (if git repo)
-  if (project.gitStatus?.isGitRepo && project.gitStatus.branch) {
+  // Favorite indicator
+  if (project.isFavorite) {
     accessories.push({
-      icon: Icon.CodeBlock,
-      text: project.gitStatus.branch,
-      tooltip: `Branch: ${project.gitStatus.branch}`,
+      icon: Icons.StarFilled,
+      tooltip: "Favorite",
     });
   }
 
-  // Uncommitted changes indicator
-  if (project.gitStatus?.hasChanges) {
+  // Group tag
+  if (project.group) {
     accessories.push({
-      icon: Icon.Dot,
-      tooltip: "Uncommitted changes",
+      icon: Icons.Folder,
+      text: project.group,
+      tooltip: `Group: ${project.group}`,
+    });
+  }
+
+  // Git status (if git repo)
+  if (project.gitStatus?.isGitRepo && project.gitStatus.branch) {
+    const { branch, ahead, behind, hasChanges } = project.gitStatus;
+
+    // Build branch text with ahead/behind info
+    let branchText = branch;
+    const syncParts: string[] = [];
+
+    if (ahead && ahead > 0) {
+      syncParts.push(`↑${ahead}`);
+    }
+    if (behind && behind > 0) {
+      syncParts.push(`↓${behind}`);
+    }
+
+    if (syncParts.length > 0) {
+      branchText = `${branch} ${syncParts.join(" ")}`;
+    }
+
+    // Build tooltip
+    const tooltipParts = [`Branch: ${branch}`];
+    if (ahead && ahead > 0) {
+      tooltipParts.push(`${ahead} ahead`);
+    }
+    if (behind && behind > 0) {
+      tooltipParts.push(`${behind} behind`);
+    }
+    if (hasChanges) {
+      tooltipParts.push("Uncommitted changes");
+    }
+
+    accessories.push({
+      icon: hasChanges ? Icons.GitDiff : Icons.GitBranch,
+      text: branchText,
+      tooltip: tooltipParts.join(" | "),
     });
   }
 
@@ -68,15 +119,10 @@ function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
   if (project.paths.length > 1) {
     accessories.push({
       text: `${project.paths.length}`,
-      icon: Icon.Folder,
+      icon: Icons.FolderOpen,
       tooltip: `${project.paths.length} paths`,
     });
   }
-
-  // App name (rightmost)
-  accessories.push({
-    text: project.app.name,
-  });
 
   return accessories;
 }

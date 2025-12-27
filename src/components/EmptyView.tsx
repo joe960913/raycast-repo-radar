@@ -1,28 +1,29 @@
-import { ActionPanel, Action, List, Icon } from "@raycast/api";
+import { ActionPanel, Action, List } from "@raycast/api";
 import ProjectForm from "./ProjectForm";
-import { SHORTCUTS } from "../constants";
+import { SHORTCUTS, Icons } from "../constants";
 
 // ============================================
 // EmptyView Component
 // ============================================
 
 interface EmptyViewProps {
+  groups?: string[];
   onProjectAdded: () => void;
 }
 
-export default function EmptyView({ onProjectAdded }: EmptyViewProps) {
+export default function EmptyView({ groups = [], onProjectAdded }: EmptyViewProps) {
   return (
     <List.EmptyView
-      icon={Icon.Document}
+      icon={Icons.Document}
       title="No Projects"
       description="Add your first project to get started"
       actions={
         <ActionPanel>
           <Action.Push
-            icon={Icon.Plus}
+            icon={Icons.Plus}
             title="Add Project"
             shortcut={SHORTCUTS.ADD_PROJECT as any}
-            target={<ProjectForm onSave={onProjectAdded} />}
+            target={<ProjectForm groups={groups} onSave={onProjectAdded} />}
           />
         </ActionPanel>
       }
