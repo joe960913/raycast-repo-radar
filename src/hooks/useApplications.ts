@@ -105,17 +105,21 @@ const SUPPORTED_TERMINALS: { bundleId: string; name: string }[] = [
   // macOS built-in
   { bundleId: "com.apple.Terminal", name: "Terminal" },
 
-  // Popular terminals
+  // Popular terminals (cross-platform)
   { bundleId: "com.googlecode.iterm2", name: "iTerm" },
   { bundleId: "dev.warp.Warp-Stable", name: "Warp" },
   { bundleId: "com.github.wez.wezterm", name: "WezTerm" },
   { bundleId: "net.kovidgoyal.kitty", name: "Kitty" },
   { bundleId: "co.zeit.hyper", name: "Hyper" },
   { bundleId: "com.mitchellh.ghostty", name: "Ghostty" },
-
-  // Other
   { bundleId: "io.alacritty", name: "Alacritty" },
   { bundleId: "com.panic.Prompt3", name: "Prompt" },
+
+  // Windows terminals
+  { bundleId: "Microsoft.WindowsTerminal", name: "Windows Terminal" },
+  { bundleId: "Microsoft.WindowsTerminal.Preview", name: "Windows Terminal Preview" },
+  { bundleId: "Microsoft.PowerShell", name: "PowerShell" },
+  { bundleId: "Microsoft.Cmd", name: "Command Prompt" },
 ];
 
 // ============================================
