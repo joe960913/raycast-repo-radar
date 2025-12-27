@@ -1,15 +1,15 @@
 import { ActionPanel, Action, List, confirmAlert, Alert } from "@raycast/api";
-import { useProjectsSimple } from "./hooks/useProjects";
+import { useProjects } from "./hooks/useProjects";
 import { ProjectForm } from "./components";
 import { SHORTCUTS, Icons } from "./constants";
-import { Project } from "./types";
+import { Project, ProjectWithStatus } from "./types";
 
 // ============================================
 // Manage Projects Command
 // ============================================
 
 export default function ManageProjects() {
-  const { projects, groups, isLoading, refresh, deleteProject, toggleFavorite } = useProjectsSimple();
+  const { projects, groups, isLoading, refresh, deleteProject, toggleFavorite } = useProjects();
 
   const handleDelete = async (project: Project) => {
     const confirmed = await confirmAlert({
@@ -59,13 +59,7 @@ export default function ManageProjects() {
             title={project.alias}
             subtitle={project.paths[0].split("/").pop()}
             keywords={[project.alias, project.app.name, project.group, ...project.paths].filter(Boolean) as string[]}
-            accessories={[
-              project.isFavorite ? { icon: Icons.StarFilled, tooltip: "Favorite" } : null,
-              project.group ? { icon: Icons.Folder, text: project.group } : null,
-              project.paths.length > 1
-                ? { text: `${project.paths.length}`, icon: Icons.FolderOpen, tooltip: `${project.paths.length} paths` }
-                : null,
-            ].filter(Boolean) as List.Item.Accessory[]}
+            accessories={getAccessories(project)}
             actions={
               <ActionPanel>
                 <ActionPanel.Section>
@@ -116,4 +110,73 @@ export default function ManageProjects() {
       )}
     </List>
   );
+}
+
+// ============================================
+// Helper Functions
+// ============================================
+
+function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
+  const accessories: List.Item.Accessory[] = [];
+
+  // Favorite indicator (text only, minimal)
+  if (project.isFavorite) {
+    accessories.push({
+      tag: { value: "★", color: "#FFD700" },
+      tooltip: "Favorite",
+    });
+  }
+
+  // Group tag
+  if (project.group) {
+    accessories.push({
+      tag: project.group,
+      tooltip: `Group: ${project.group}`,
+    });
+  }
+
+  // Git status (if git repo) - text only for consistency
+  if (project.gitStatus?.isGitRepo && project.gitStatus.branch) {
+    const { branch, ahead, behind, hasChanges } = project.gitStatus;
+
+    // Build branch display
+    const parts: string[] = [branch];
+
+    if (ahead && ahead > 0) {
+      parts.push(`↑${ahead}`);
+    }
+    if (behind && behind > 0) {
+      parts.push(`↓${behind}`);
+    }
+    if (hasChanges) {
+      parts.push("●");
+    }
+
+    // Build tooltip
+    const tooltipParts = [`Branch: ${branch}`];
+    if (ahead && ahead > 0) {
+      tooltipParts.push(`${ahead} ahead`);
+    }
+    if (behind && behind > 0) {
+      tooltipParts.push(`${behind} behind`);
+    }
+    if (hasChanges) {
+      tooltipParts.push("Uncommitted changes");
+    }
+
+    accessories.push({
+      text: parts.join(" "),
+      tooltip: tooltipParts.join(" | "),
+    });
+  }
+
+  // Path count (if multiple)
+  if (project.paths.length > 1) {
+    accessories.push({
+      text: `${project.paths.length} paths`,
+      tooltip: `${project.paths.length} paths`,
+    });
+  }
+
+  return accessories;
 }

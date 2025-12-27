@@ -60,10 +60,10 @@ function formatSubtitle(project: ProjectWithStatus): string {
 function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
   const accessories: List.Item.Accessory[] = [];
 
-  // Favorite indicator
+  // Favorite indicator (text only, minimal)
   if (project.isFavorite) {
     accessories.push({
-      icon: Icons.StarFilled,
+      tag: { value: "★", color: "#FFD700" },
       tooltip: "Favorite",
     });
   }
@@ -71,29 +71,26 @@ function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
   // Group tag
   if (project.group) {
     accessories.push({
-      icon: Icons.Folder,
-      text: project.group,
+      tag: project.group,
       tooltip: `Group: ${project.group}`,
     });
   }
 
-  // Git status (if git repo)
+  // Git status (if git repo) - text only for consistency
   if (project.gitStatus?.isGitRepo && project.gitStatus.branch) {
     const { branch, ahead, behind, hasChanges } = project.gitStatus;
 
-    // Build branch text with ahead/behind info
-    let branchText = branch;
-    const syncParts: string[] = [];
+    // Build branch display
+    const parts: string[] = [branch];
 
     if (ahead && ahead > 0) {
-      syncParts.push(`↑${ahead}`);
+      parts.push(`↑${ahead}`);
     }
     if (behind && behind > 0) {
-      syncParts.push(`↓${behind}`);
+      parts.push(`↓${behind}`);
     }
-
-    if (syncParts.length > 0) {
-      branchText = `${branch} ${syncParts.join(" ")}`;
+    if (hasChanges) {
+      parts.push("●");
     }
 
     // Build tooltip
@@ -109,8 +106,7 @@ function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
     }
 
     accessories.push({
-      icon: hasChanges ? Icons.GitDiff : Icons.GitBranch,
-      text: branchText,
+      text: parts.join(" "),
       tooltip: tooltipParts.join(" | "),
     });
   }
@@ -118,8 +114,7 @@ function getAccessories(project: ProjectWithStatus): List.Item.Accessory[] {
   // Path count (if multiple)
   if (project.paths.length > 1) {
     accessories.push({
-      text: `${project.paths.length}`,
-      icon: Icons.FolderOpen,
+      text: `${project.paths.length} paths`,
       tooltip: `${project.paths.length} paths`,
     });
   }
