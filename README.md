@@ -5,10 +5,6 @@
 <h3 align="center">Repo Radar</h3>
 
 <p align="center">
-  <em>a raycast extension for launching projects</em>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/raycast-f4f4f4?style=flat&logo=raycast&logoColor=555" alt="raycast">
   <img src="https://img.shields.io/badge/macOS-f4f4f4?style=flat&logoColor=555" alt="macos">
   <img src="https://img.shields.io/badge/windows-f4f4f4?style=flat&logoColor=555" alt="windows">
@@ -24,46 +20,40 @@
 
 <br>
 
-Open projects in your IDE, Terminal, or both.
+a quiet project launcher for raycast.
+
+open your projects in IDE, Terminal, or both — with a single keystroke.
 
 <br>
 
-### how to use
+### usage
 
 ```
-1. Add Project   →   give it an alias, pick folders, choose IDE & terminal
-2. Go            →   search by alias, press enter
-3. Done          →   your project opens where you want it
-```
-
-<br>
-
-### what makes it different
-
-```
-· ide + terminal together    open both with one keystroke
-· smart sorting              frecency — recent + frequent rises to top
-· git at a glance            branch · ahead/behind · uncommitted changes
-· quicklinks                 access from raycast root search
+1. add project   →   alias, folders, ide, terminal
+2. go            →   type alias, press enter
+3. done          →   project opens where you want
 ```
 
 <br>
 
-### what it offers
+### features
 
 ```
-· custom aliases          · favorites & groups
-· multi-folder workspaces · smart sorting
-· git status at a glance  · quicklinks
+· ide + terminal       open both at once
+· smart sorting        frecency-based — recent + frequent rises
+· favorites & groups   organize with custom icons
+· git status           branch, ahead/behind, uncommitted
+· quicklinks           access from raycast root search
+· multi-folder         workspace support for vscode/cursor
 ```
 
 <br>
 
-### supported
+### supported apps
 
 ```
-IDEs        cursor · vscode · webstorm · intellij · xcode · zed · sublime
-Terminals   iterm · warp · ghostty · kitty · alacritty · terminal.app
+ide         cursor · vscode · webstorm · intellij · xcode · zed · sublime
+terminal    iterm · warp · ghostty · kitty · alacritty · terminal.app
 ```
 
 <br>
