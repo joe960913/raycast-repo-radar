@@ -65,9 +65,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
   const [selectedPaths, setSelectedPaths] = useState<string[]>(project?.paths || []);
   // Use empty string instead of undefined to keep dropdowns controlled
   const [selectedAppBundleId, setSelectedAppBundleId] = useState<string>(project?.app?.bundleId || "");
-  const [selectedTerminalBundleId, setSelectedTerminalBundleId] = useState<string>(
-    project?.terminal?.bundleId || "",
-  );
+  const [selectedTerminalBundleId, setSelectedTerminalBundleId] = useState<string>(project?.terminal?.bundleId || "");
   const [selectedOpenMode, setSelectedOpenMode] = useState<OpenMode>(project?.openMode || "ide");
   const [selectedGroup, setSelectedGroup] = useState<string>(project?.group || "");
   const [customGroup, setCustomGroup] = useState<string>("");
