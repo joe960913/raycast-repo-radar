@@ -122,7 +122,10 @@ export type KnownIdeBundleId = keyof typeof MULTI_WORKSPACE_IDES;
 // Check if an IDE supports multi-workspace
 export function supportsMultiWorkspace(bundleId: string): boolean {
   // Default to false (safer assumption)
-  return MULTI_WORKSPACE_IDES[bundleId] ?? false;
+  if (bundleId in MULTI_WORKSPACE_IDES) {
+    return MULTI_WORKSPACE_IDES[bundleId as KnownIdeBundleId];
+  }
+  return false;
 }
 
 // ============================================
