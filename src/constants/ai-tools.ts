@@ -33,7 +33,7 @@ export const AI_TOOL_DEFINITIONS: AIToolDefinition[] = [
 // ============================================
 
 const COMMAND_ICONS: Record<string, string> = Object.fromEntries(
-  AI_TOOL_DEFINITIONS.map((tool) => [tool.command, tool.icon])
+  AI_TOOL_DEFINITIONS.map((tool) => [tool.command, tool.icon]),
 );
 
 /**

@@ -15,7 +15,14 @@ import { addProject, updateProject, isAliasExists } from "../lib/storage";
 import { useApplications, useTerminals } from "../hooks/useApplications";
 import { useAITools } from "../hooks/useAITools";
 import { createProjectDeeplink } from "../utils/deeplink";
-import { DEFAULT_GROUPS, GROUP_ICON_OPTIONS, getIconForGroup, supportsMultiWorkspace, Icons, KNOWN_AI_COMMANDS } from "../constants";
+import {
+  DEFAULT_GROUPS,
+  GROUP_ICON_OPTIONS,
+  getIconForGroup,
+  supportsMultiWorkspace,
+  Icons,
+  KNOWN_AI_COMMANDS,
+} from "../constants";
 
 // ============================================
 // Form Values Interface
@@ -57,7 +64,9 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
   // Track selected paths and app for multi-workspace warning
   const [selectedPaths, setSelectedPaths] = useState<string[]>(project?.paths || []);
   const [selectedAppBundleId, setSelectedAppBundleId] = useState<string | undefined>(project?.app?.bundleId);
-  const [selectedTerminalBundleId, setSelectedTerminalBundleId] = useState<string | undefined>(project?.terminal?.bundleId);
+  const [selectedTerminalBundleId, setSelectedTerminalBundleId] = useState<string | undefined>(
+    project?.terminal?.bundleId,
+  );
   const [selectedOpenMode, setSelectedOpenMode] = useState<OpenMode>(project?.openMode || "ide");
   const [selectedGroup, setSelectedGroup] = useState<string>(project?.group || "");
   const [customGroup, setCustomGroup] = useState<string>("");
@@ -301,12 +310,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
       </Form.Dropdown>
 
       {(selectedOpenMode === "ide" || selectedOpenMode === "both") && (
-        <Form.Dropdown
-          id="appBundleId"
-          title="IDE"
-          value={selectedAppBundleId}
-          onChange={setSelectedAppBundleId}
-        >
+        <Form.Dropdown id="appBundleId" title="IDE" value={selectedAppBundleId} onChange={setSelectedAppBundleId}>
           {applications.map((app) => (
             <Form.Dropdown.Item
               key={app.bundleId}

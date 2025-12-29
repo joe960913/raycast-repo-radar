@@ -19,21 +19,9 @@ export interface AITool extends AIToolDefinition {
 
 /** Common installation paths for AI CLI tools */
 const COMMON_PATHS: Record<string, string[]> = {
-  claude: [
-    `${homedir()}/.local/bin/claude`,
-    `${homedir()}/.claude/local/claude`,
-    "/usr/local/bin/claude",
-  ],
-  codex: [
-    `${homedir()}/.nvm/versions/node/*/bin/codex`,
-    "/usr/local/bin/codex",
-    `${homedir()}/.npm-global/bin/codex`,
-  ],
-  gemini: [
-    `${homedir()}/.local/bin/gemini`,
-    "/usr/local/bin/gemini",
-    `${homedir()}/.npm-global/bin/gemini`,
-  ],
+  claude: [`${homedir()}/.local/bin/claude`, `${homedir()}/.claude/local/claude`, "/usr/local/bin/claude"],
+  codex: [`${homedir()}/.nvm/versions/node/*/bin/codex`, "/usr/local/bin/codex", `${homedir()}/.npm-global/bin/codex`],
+  gemini: [`${homedir()}/.local/bin/gemini`, "/usr/local/bin/gemini", `${homedir()}/.npm-global/bin/gemini`],
 };
 
 /**

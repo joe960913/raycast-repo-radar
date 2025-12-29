@@ -52,4 +52,3 @@ export function createTerminalExecutor(bundleId: string): TerminalExecutor {
       return new GenericExecutor();
   }
 }
-

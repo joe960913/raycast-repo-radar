@@ -73,13 +73,9 @@ const SUPPORTED_TERMINALS: { bundleId: string; name: string }[] = [
 // Fetch and Filter Applications
 // ============================================
 
-async function fetchFilteredApps(
-  supportedApps: { bundleId: string; name: string }[]
-): Promise<AppInfo[]> {
+async function fetchFilteredApps(supportedApps: { bundleId: string; name: string }[]): Promise<AppInfo[]> {
   const installedApps = await getApplications();
-  const installedBundleIds = new Set(
-    installedApps.map((app) => app.bundleId).filter(Boolean)
-  );
+  const installedBundleIds = new Set(installedApps.map((app) => app.bundleId).filter(Boolean));
 
   return supportedApps
     .filter((app) => installedBundleIds.has(app.bundleId))

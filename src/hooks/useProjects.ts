@@ -136,7 +136,7 @@ export function useProjects(): UseProjectsReturn {
       }
       return success;
     },
-    [refresh]
+    [refresh],
   );
 
   const toggleFavorite = useCallback(
@@ -149,7 +149,7 @@ export function useProjects(): UseProjectsReturn {
         message: project.alias,
       });
     },
-    [refresh]
+    [refresh],
   );
 
   return {
