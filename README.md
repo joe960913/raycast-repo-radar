@@ -13,9 +13,13 @@
 
 <br>
 
-**One keystroke. IDE + Terminal + AI. Done.**
+<p align="center">
+  <strong>One keystroke. IDE + Terminal + AI. Done.</strong>
+</p>
 
-Stop switching between apps. Open your project in IDE and Terminal simultaneously, with your favorite AI coding assistant ready to go.
+<p align="center">
+  Stop switching between apps. Open your project in IDE and Terminal simultaneously,<br>with your favorite AI coding assistant ready to go.
+</p>
 
 <br>
 
