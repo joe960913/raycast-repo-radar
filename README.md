@@ -2,7 +2,7 @@
   <img src="assets/extension-icon.png" width="80" height="80" alt="icon">
 </p>
 
-<h3 align="center">Repo Radar</h3>
+<h3 align="center">Project Radar</h3>
 
 <p align="center">
   <img src="https://img.shields.io/badge/raycast-f4f4f4?style=flat&logo=raycast&logoColor=555" alt="raycast">
@@ -37,7 +37,7 @@
 
 <br>
 
-### Why Repo Radar?
+### Why Project Radar?
 
 | Feature | Benefit |
 |---------|---------|

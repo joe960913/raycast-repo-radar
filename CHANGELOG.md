@@ -1,3 +1,3 @@
-# Repo Radar Changelog
+# Project Radar Changelog
 
 ## [Initial Version] - {PR_MERGE_DATE}
