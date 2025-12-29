@@ -57,6 +57,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
   // Track selected paths and app for multi-workspace warning
   const [selectedPaths, setSelectedPaths] = useState<string[]>(project?.paths || []);
   const [selectedAppBundleId, setSelectedAppBundleId] = useState<string | undefined>(project?.app?.bundleId);
+  const [selectedTerminalBundleId, setSelectedTerminalBundleId] = useState<string | undefined>(project?.terminal?.bundleId);
   const [selectedOpenMode, setSelectedOpenMode] = useState<OpenMode>(project?.openMode || "ide");
   const [selectedGroup, setSelectedGroup] = useState<string>(project?.group || "");
   const [customGroup, setCustomGroup] = useState<string>("");
@@ -111,8 +112,8 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
     }
 
     // Validate app selection (only if mode includes IDE)
-    const openMode = values.openMode || "ide";
-    if ((openMode === "ide" || openMode === "both") && !values.appBundleId) {
+    const openMode = selectedOpenMode;
+    if ((openMode === "ide" || openMode === "both") && !selectedAppBundleId) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Validation Error",
@@ -122,7 +123,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
     }
 
     // Validate terminal selection (only if mode includes terminal)
-    if ((openMode === "terminal" || openMode === "both") && !values.terminalBundleId) {
+    if ((openMode === "terminal" || openMode === "both") && !selectedTerminalBundleId) {
       await showToast({
         style: Toast.Style.Failure,
         title: "Validation Error",
@@ -132,7 +133,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
     }
 
     // Find the selected app
-    const selectedApp = applications.find((app) => app.bundleId === values.appBundleId);
+    const selectedApp = applications.find((app) => app.bundleId === selectedAppBundleId);
     if ((openMode === "ide" || openMode === "both") && !selectedApp) {
       await showToast({
         style: Toast.Style.Failure,
@@ -143,7 +144,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
     }
 
     // Find the selected terminal
-    const selectedTerminal = terminals.find((t) => t.bundleId === values.terminalBundleId);
+    const selectedTerminal = terminals.find((t) => t.bundleId === selectedTerminalBundleId);
     if ((openMode === "terminal" || openMode === "both") && !selectedTerminal) {
       await showToast({
         style: Toast.Style.Failure,
@@ -303,7 +304,7 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
         <Form.Dropdown
           id="appBundleId"
           title="IDE"
-          defaultValue={appsLoading ? undefined : project?.app?.bundleId}
+          value={selectedAppBundleId}
           onChange={setSelectedAppBundleId}
         >
           {applications.map((app) => (
@@ -329,7 +330,8 @@ export default function ProjectForm({ project, groups = [], onSave }: ProjectFor
           <Form.Dropdown
             id="terminalBundleId"
             title="Terminal"
-            defaultValue={terminalsLoading ? undefined : project?.terminal?.bundleId}
+            value={selectedTerminalBundleId}
+            onChange={setSelectedTerminalBundleId}
           >
             {terminals.map((terminal) => (
               <Form.Dropdown.Item

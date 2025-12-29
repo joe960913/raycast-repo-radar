@@ -13,46 +13,55 @@
 
 <br>
 
+**One keystroke. IDE + Terminal + AI. Done.**
+
+Stop switching between apps. Open your project in IDE and Terminal simultaneously, with your favorite AI coding assistant ready to go.
+
+<br>
+
 <p align="center">
-  <img src="https://img.2ander.com/repo-radar-screen.gif" width="600" alt="demo">
+  <img src="https://img.2ander.com/repo-radar-screenshot/shotcraft-1.png" width="600" alt="Project List">
+</p>
+
+<p align="center">
+  <img src="https://img.2ander.com/repo-radar-screenshot/shotcraft-2.png" width="600" alt="Add Project">
+</p>
+
+<p align="center">
+  <img src="https://img.2ander.com/repo-radar-screenshot/shotcraft-3.png" width="600" alt="Open Mode">
 </p>
 
 <br>
 
-a quiet project launcher for raycast.
+### Why Repo Radar?
 
-open your projects in IDE, Terminal, or both — with a single keystroke.
-
-<br>
-
-### usage
-
-```
-1. add project   →   alias, folders, ide, terminal
-2. go            →   type alias, press enter
-3. done          →   project opens where you want
-```
+| Feature | Benefit |
+|---------|---------|
+| **IDE + Terminal** | Open both in one action, no more cmd+tab |
+| **AI CLI Ready** | Auto-run `claude`, `codex`, `gemini`, or any custom command |
+| **Custom Commands** | Run `nvim`, `vim`, `make dev`, or whatever you need |
+| **Smart Sorting** | Frecency-based — your most-used projects rise to top |
+| **Multi-folder Workspace** | Open multiple folders in VS Code/Cursor/Windsurf |
+| **Quicklinks** | Access projects from Raycast root search |
 
 <br>
 
-### features
+### 3-Step Setup
 
 ```
-· ide + terminal       open both at once
-· smart sorting        frecency-based — recent + frequent rises
-· favorites & groups   organize with custom icons
-· git status           branch, ahead/behind, uncommitted
-· quicklinks           access from raycast root search
-· multi-folder         workspace support for vscode/cursor/windsurf/trae
+1. Add Project   →   set alias, folders, IDE, terminal
+2. Type alias    →   fuzzy search finds it instantly
+3. Press Enter   →   IDE + Terminal + AI opens together
 ```
 
 <br>
 
-### supported apps
+### Supported Apps
 
 ```
-ide         cursor · windsurf · trae · vscode · webstorm · intellij · xcode · zed · sublime
-terminal    iterm · warp · ghostty · kitty · alacritty · terminal.app
+IDE         Cursor · Windsurf · Trae · VS Code · WebStorm · IntelliJ · Xcode · Zed
+Terminal    Warp · iTerm · Ghostty · Kitty · Alacritty · Terminal.app
+Commands    Claude Code · Codex · Gemini CLI · or any custom command
 ```
 
 <br>
