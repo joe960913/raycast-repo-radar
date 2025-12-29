@@ -44,7 +44,7 @@ open your projects in IDE, Terminal, or both — with a single keystroke.
 · favorites & groups   organize with custom icons
 · git status           branch, ahead/behind, uncommitted
 · quicklinks           access from raycast root search
-· multi-folder         workspace support for vscode/cursor
+· multi-folder         workspace support for vscode/cursor/windsurf/trae
 ```
 
 <br>
@@ -52,7 +52,7 @@ open your projects in IDE, Terminal, or both — with a single keystroke.
 ### supported apps
 
 ```
-ide         cursor · vscode · webstorm · intellij · xcode · zed · sublime
+ide         cursor · windsurf · trae · vscode · webstorm · intellij · xcode · zed · sublime
 terminal    iterm · warp · ghostty · kitty · alacritty · terminal.app
 ```
 
