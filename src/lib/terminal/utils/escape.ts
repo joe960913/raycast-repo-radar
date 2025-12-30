@@ -16,10 +16,15 @@ export function escapeShellArg(arg: string): string {
 
 /**
  * Escapes a string for safe use inside AppleScript double-quoted strings.
- * Escapes backslashes and double quotes.
+ * Escapes backslashes, double quotes, and control characters.
  */
 export function escapeAppleScriptString(str: string): string {
-  return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return str
+    .replace(/\\/g, "\\\\") // Backslashes first
+    .replace(/"/g, '\\"') // Double quotes
+    .replace(/\n/g, "\\n") // Newlines
+    .replace(/\r/g, "\\r") // Carriage returns
+    .replace(/\t/g, "\\t"); // Tabs
 }
 
 /**

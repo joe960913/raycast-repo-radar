@@ -1,6 +1,6 @@
 import { runAppleScript } from "@raycast/utils";
 import { TerminalExecutor, TerminalExecuteParams } from "../types";
-import { escapeShellArg, escapeAppleScriptString } from "../utils/escape";
+import { buildSafeShellCommand, escapeAppleScriptString } from "../utils/escape";
 
 // ============================================
 // Warp Executor (UI Scripting via clipboard)
@@ -12,9 +12,8 @@ import { escapeShellArg, escapeAppleScriptString } from "../utils/escape";
 
 export class WarpExecutor implements TerminalExecutor {
   async execute({ path, command }: TerminalExecuteParams): Promise<void> {
-    // Build safe shell command with escaped path
-    const safePath = escapeShellArg(path);
-    const fullCommand = command ? `cd ${safePath} && ${escapeShellArg(command)}` : `cd ${safePath}`;
+    // Build safe shell command with escaped arguments (prevents shell injection)
+    const fullCommand = buildSafeShellCommand(path, command);
 
     // Escape for AppleScript string
     const escapedCommand = escapeAppleScriptString(fullCommand);

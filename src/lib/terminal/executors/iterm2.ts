@@ -1,6 +1,6 @@
 import { runAppleScript } from "@raycast/utils";
 import { TerminalExecutor, TerminalExecuteParams } from "../types";
-import { escapeShellArg, escapeAppleScriptString } from "../utils/escape";
+import { buildSafeShellCommand, escapeAppleScriptString } from "../utils/escape";
 
 // ============================================
 // iTerm2 Executor
@@ -8,9 +8,8 @@ import { escapeShellArg, escapeAppleScriptString } from "../utils/escape";
 
 export class ITerm2Executor implements TerminalExecutor {
   async execute({ path, command }: TerminalExecuteParams): Promise<void> {
-    // Build safe shell command with escaped arguments
-    const safePath = escapeShellArg(path);
-    const script = command ? `cd ${safePath} && ${escapeShellArg(command)}` : `cd ${safePath}`;
+    // Build safe shell command with escaped arguments (prevents shell injection)
+    const script = buildSafeShellCommand(path, command);
 
     // Escape for AppleScript string
     const escapedScript = escapeAppleScriptString(script);
